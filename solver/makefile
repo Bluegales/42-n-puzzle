@@ -6,7 +6,7 @@
 #    By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/10 12:13:51 by pfuchs            #+#    #+#              #
-#    Updated: 2022/05/07 11:18:35 by pfuchs           ###   ########.fr        #
+#    Updated: 2022/05/07 13:54:26 by pfuchs           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ INCFLAG	= -I src
 # File Variables
 NAME	= test
 FILES	= main
-CLASSES	= parse puzzle heuristics solver
+CLASSES	= parse puzzle heuristics solver node
 SRC		= $(addsuffix .cc,$(CLASSES) $(FILES))
 HEADER	= $(addsuffix .h,$(CLASSES))
 OBJ		= $(addprefix _bin/,$(notdir $(SRC:.cc=.o)))

@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:20:38 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/06 23:32:45 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/07 16:37:27 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,20 +31,20 @@ Puzzle::Puzzle(const std::vector<uint8_t> &data) {
         if (data[i] == 0) emptyField_ = i;
 }
 
-Puzzle::Puzzle(const Puzzle &oldPuzzle, enum operation op) {
+Puzzle::Puzzle(const Puzzle &puzzle)
+{
     data_ = new u_int8_t[sizeFull_];
     if (!data_)
     {
         std::cerr << "error: ran out of memory :(\n";
         exit(0);
     }
-    std::copy(oldPuzzle.data_, oldPuzzle.data_ + sizeFull_, data_);
-    emptyField_ = applyOperation(op);
+    std::copy(puzzle.data_, puzzle.data_ + sizeFull_, data_);
 }
 
 Puzzle::~Puzzle()
 {
-    //delete[] data_;
+    delete[] data_;
 }
 
 void Puzzle::print()
@@ -62,26 +62,4 @@ void Puzzle::print()
             std::cout << "\n";
         }
     }
-}
-
-int Puzzle::applyOperation(enum operation op)
-{
-    uint8_t swap;
-    switch(op)
-    {
-        case kup:
-            swap = emptyField_ - sizeX_;
-        break;
-        case kdown:
-            swap = emptyField_ + sizeX_;
-        break;
-        case kleft:
-            swap = emptyField_ - 1;
-        break;
-        case kright:
-            swap = emptyField_ + 1;
-        break;
-    }
-    std::swap(data_[emptyField_], data_[swap]);
-    return swap;
 }

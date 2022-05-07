@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 10:59:05 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/07 11:59:15 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/07 19:32:50 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,25 +17,31 @@
 #include <queue>
 #include <unordered_set>
 
-#include "puzzle.h"
+#include "node.h"
+
+class Puzzle;
+
+typedef int (*heuristicFunction)(Puzzle &);
 
 class Compare
 {
 public:
-	bool operator() (Puzzle, Puzzle);
+	bool operator() (Node a, Node b){
+	    return (a.getWeight() <= b.getWeight());
+    }
 };
 
 class Solver {
    public:
-    Solver(Puzzle& puzzle);
+    Solver(Puzzle& puzzle, heuristicFunction heuristic_);
     ~Solver();
 
+    const heuristicFunction heuristic_;
     int solve();
 
    private:
-   	Compare cmp;
     //std::function<bool(const Puzzle& a, const Puzzle& b)> *cmp;
-    std::priority_queue<Puzzle, std::vector<Puzzle>, Compare> nodes_;
+    std::priority_queue<Node, std::vector<Node>, Compare> nodes_;
     //std::unordered_set<Puzzle> visited_;
 };
 
