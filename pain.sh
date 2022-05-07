@@ -1,2 +1,3 @@
-(cd solver/src && make)
-./solver/src/test ./files/simple.txt
+(cd solver && make)
+./solver/test ./files/npuzzle-3-1.txt
+#valgrind ./solver/test ./files/npuzzle-3-1.txt

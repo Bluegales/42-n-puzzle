@@ -1,30 +1,50 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cc                                            :+:      :+:    :+:   */
+/*   solver.cc                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/05/06 17:22:47 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/07 12:03:45 by pfuchs           ###   ########.fr       */
+/*   Created: 2022/05/07 10:57:47 by pfuchs            #+#    #+#             */
+/*   Updated: 2022/05/07 12:03:34 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <vector>
-
-#include "parse.h"
-#include "puzzle.h"
 #include "solver.h"
 
-int main(int argc, char **argv) {
-    if (argc != 2)
-        return (1);
-    std::vector<uint8_t> numbers;
-    if (parse(argv[1], numbers))
-        return (1);
-    Puzzle puzzle(numbers);
-    Solver solver(puzzle);
-    solver.solve();
-    return 0;
+#include <iostream>
+
+#include "puzzle.h"
+#include "heuristics.h"
+
+Solver::Solver(Puzzle &puzzle)
+{
+	if (!solvable(puzzle))
+	{
+		std::cout << "not solvable\n";
+		return;
+	}
+	nodes_.push(puzzle);
+}
+
+Solver::~Solver()
+{
+
+}
+
+int Solver::solve()
+{
+	if (nodes_.empty())
+		return 0;
+	while (1)
+	{
+		Puzzle top = nodes_.top();
+		top.print();
+		nodes_.pop();
+		return 0;
+	}
+}
+
+bool Compare::operator()(Puzzle, Puzzle) {
+	return true;
 }

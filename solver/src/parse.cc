@@ -6,54 +6,67 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:23:29 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/06 18:33:43 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/06 21:43:29 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
+#include <algorithm>
 #include <fstream>
-#include <vector>
+#include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
-std::vector<uint8_t> parse(char *file_name) {
+static int extractIntegers(std::string line, std::vector<uint8_t> &data) {
+    std::istringstream lineData(line.substr(0, line.find_first_of('#')));
+    std::string temp;
+    while (!lineData.eof()) {
+        lineData >> temp;
+        if (temp.empty())
+            return 0;
+        int n;
+        try {
+            n = std::stoi(temp);
+        } catch (const std::exception &e) {
+            std::cerr << "error in file " << e.what() << '\n';
+            return 1;
+        }
+        data.push_back(n);
+        temp = "";
+    }
+    return 0;
+}
+
+static bool areConsecutive(std::vector<uint8_t> &numbers)
+{
+    for (int i = 0; i < (int)numbers.size(); i++) {
+        if(std::find(numbers.begin(), numbers.end(), i) == numbers.end())
+            return false;
+    }
+    return true;
+}
+
+int parse(char *file_name, std::vector<uint8_t> &numbers) {
     std::ifstream file;
-    file.open (file_name);
+    file.open(file_name);
     if (!file.is_open()) {
         std::cerr << "Error opening file\n";
-        exit(0);
+        return (1);
     }
     std::string line;
-    std::cout << line << "\n";
-    std::vector<uint8_t> numbers;
     while (std::getline(file, line))
+        if (extractIntegers(line, numbers)) return 1;
+    if (numbers[0] * numbers[0] + 1 != (int)numbers.size())
     {
-        std::istringstream lineData(line.substr( 0, line.find_first_of('#')));
-        std::cout << "testing line:" << line << std::endl << std::flush;
-        if (line.empty())
-            continue;
-        size_t pos;
-        while (!line.empty()) {
-            pos = line.find_first_not_of(' ');
-            if (!line[pos])
-                break;
-            if (pos != std::string::npos)
-            {
-                int n;
-                try
-                {
-                    n = std::stoi(line.substr(0, pos));
-                }
-                catch(const std::exception& e)
-                {
-                    std::cerr << e.what() << std::endl;
-                    exit(2) ;
-                }
-                numbers.push_back(n);
-            }
-            line.erase(0, pos + 1);
-        }
+        std::cerr << "Size doesnt match\n";
+        return (1);
+    }
+    numbers.erase(numbers.begin());
+    if (!areConsecutive(numbers))
+    {
+        std::cerr << "Non consecutive numbers\n";
+        return (1);
     }
     file.close();
-    return numbers;
+    return 0;
 }

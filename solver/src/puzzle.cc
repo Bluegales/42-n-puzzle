@@ -6,27 +6,29 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:20:38 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/06 13:22:16 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/06 23:32:45 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "puzzle.h"
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <iomanip>
 
-inline uint8_t getX(uint8_t sizeX, uint8_t sizeY, uint8_t id) {
+uint8_t Puzzle::sizeX_;
+uint8_t Puzzle::sizeFull_;
 
-}
-
-inline uint8_t getY(uint8_t sizeX, uint8_t sizeY, uint8_t id) {
-
-}
-
-Puzzle::Puzzle(std::vector<uint8_t> &data) {
+Puzzle::Puzzle(const std::vector<uint8_t> &data) {
+    Puzzle::sizeFull_ = data.size();
+    Puzzle::sizeX_ = sqrt(data.size());
     data_ = new u_int8_t[sizeFull_];
+    std::copy(data.data(), data.data() + sizeFull_, data_);
+    for (int i = 0; i < (int)data.size(); i++)
+        if (data[i] == 0) emptyField_ = i;
 }
 
 Puzzle::Puzzle(const Puzzle &oldPuzzle, enum operation op) {
@@ -36,47 +38,50 @@ Puzzle::Puzzle(const Puzzle &oldPuzzle, enum operation op) {
         std::cerr << "error: ran out of memory :(\n";
         exit(0);
     }
-    std::copy(oldPuzzle.data_, oldPuzzle.data_ + sizeX_ * sizeY_, data_);
+    std::copy(oldPuzzle.data_, oldPuzzle.data_ + sizeFull_, data_);
+    emptyField_ = applyOperation(op);
 }
 
 Puzzle::~Puzzle()
 {
-    delete[] data_;
+    //delete[] data_;
 }
 
-Position Puzzle::getEmptyField()
+void Puzzle::print()
 {
-    for (int i = 0; i < sizeFull_; i++)
-        if (data_[i] == sizeFull_) {
-            return (Position){i / sizeX_, i % sizeY_};
+    for (int j = 0; j < sizeX_ + 1; j++)
+        std::cout << "-----";
+    std::cout << "\n";
+    for (int i = 0; i < sizeFull_; i++) {
+        std::cout << " |" << std::setw(3) << (int)data_[i];
+        if ((i + 1) % sizeX_ == 0)
+        {
+            std::cout << " |\n";
+            for (int j = 0; j < sizeX_; j++)
+                std::cout << "------";
+            std::cout << "\n";
         }
-    std::cerr << "error: puzzle without an empty field\n";
-    exit(0);
+    }
 }
 
-void Puzzle::applyOperation(enum operation op)
+int Puzzle::applyOperation(enum operation op)
 {
-    Position empty = getEmptyField();
-    Position swap = empty;
+    uint8_t swap;
     switch(op)
     {
         case kup:
-            swap.x--;
-            if (swap.x < 0) return ;
+            swap = emptyField_ - sizeX_;
         break;
         case kdown:
-            swap.x++;
-            if (swap.x == sizeX_) return ;
+            swap = emptyField_ + sizeX_;
         break;
         case kleft:
-            swap.y--;
-            if (swap.y == 0) return ;
+            swap = emptyField_ - 1;
         break;
         case kright:
-            swap.y++;
-            if (swap.y == sizeY_) return ;
+            swap = emptyField_ + 1;
         break;
     }
-    std::swap(data_[empty.x + empty.y * sizeY_],
-              data_[swap.x + swap.y * sizeY_]);
+    std::swap(data_[emptyField_], data_[swap]);
+    return swap;
 }
