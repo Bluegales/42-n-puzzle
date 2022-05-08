@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 10:57:47 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/08 20:16:43 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/08 20:31:07 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int Solver::solve() {
                 best = top->getTransitions();
                 delete best_node_;
                 best_node_ = new Node(*top);
-                return (0);
+                //return (0);
             } else {
                 branch(top);
             }

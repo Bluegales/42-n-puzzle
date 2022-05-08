@@ -111,6 +111,10 @@ class Puzzle {
       if (i == hole) {
         newDiv.classes.add("empty-element");
       }
+      newDiv.appendText((picColumn + picRow * _size).toString());
+      newDiv.style.textShadow = "0 0 20px #ff0000, 0 0 10px #0000ff";
+      newDiv.style.color = "green";
+      newDiv.style.fontSize = (90 / _size).toString() + "vh";
       elements.add(newDiv);
       //newDiv.style.backgroundPositionY = (int.parse(n) % _size * 100).round().toString() + "% left";
       //"top " + (int.parse(n) / _size).toString() + " px";

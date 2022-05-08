@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 17:22:47 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/08 19:48:09 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/08 20:39:36 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void print(const Puzzle &start, const Solver &solver, int64_t duration) {
     std::cout << "Moves: " << solution->getTransitions() << "\n";
     std::cout << "Time complexity: " << solver.getTimeComplexity() << "\n";
     std::cout << "Size complexity: " << solver.getSizeComplexity() << "\n";
-    std::cout << "http://localhost:8080/?nbr=";
+    std::cout << "https://bluegales.github.io/42-n-puzzle/?nbr=";
     int size = start.getSizeX();
     Puzzle puzzle_convert(start);
     int hole = 0;
@@ -40,7 +40,7 @@ void print(const Puzzle &start, const Solver &solver, int64_t duration) {
             if (start.data_[j] == i)
             {
                 if (i == 0)
-                    hole = convert_id;
+                    hole = j;
                 puzzle_convert.data_[j] = convert_id;
             }
         }

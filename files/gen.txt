@@ -1,11 +1,11 @@
 # This puzzle is solvable
 3
+4
+7
 3
 5
-1
-7
-2
-6
-4
 8
+6
 0
+1
+2
