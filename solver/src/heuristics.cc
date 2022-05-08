@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 22:40:02 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/08 15:15:00 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/08 21:28:51 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,17 @@ static int parity(const uint8_t *data, int size) {
 
 bool solvable(const Puzzle &puzzle) {
     int par = parity(puzzle.data_, puzzle.getSizeFull());
-    // std::cout << "parity is: " << par << "\n";
+    std::cout << "parity is: " << par << "\n";
     if (puzzle.getSizeFull() % 2 == 0) {
         int test_empty_x = puzzle.emptyField_ / puzzle.getSizeX();
         int real_empty_x =
             solution().data[puzzle.getSizeX()][puzzle.getSizeFull() - 1].x;
         int offset = abs(test_empty_x - real_empty_x);
         par += offset;
+        std::cout << "offset is" << offset << "\n";
     }
     if (par % 2 != 0) {
+        std::cout << "is solvable!!\n";
         return true;
     }
     return false;
