@@ -16,6 +16,7 @@ html, body {
 
 .element {
   position: absolute;
+  transition: left 1s, top 1s;
   background-size: 100vh 100vh;
   background-image: url(picture.jpg);
   background-clip: content-box;

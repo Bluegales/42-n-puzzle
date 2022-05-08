@@ -6,7 +6,7 @@
 #    By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/10 12:13:51 by pfuchs            #+#    #+#              #
-#    Updated: 2022/05/08 20:10:55 by pfuchs           ###   ########.fr        #
+#    Updated: 2022/05/09 00:50:31 by pfuchs           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ VPATH = src
 
 # Compiler Variables
 CC		= g++
-CFLAGSS	= -Wall -Wextra -Werror -Wno-shadow -g -O3 -std=c++20
+CFLAGSS	= -Wall -Wextra -Werror -Wno-shadow -g -O3 -std=c++17
 INCFLAG	= -I src
 # File Variables
 NAME	= test

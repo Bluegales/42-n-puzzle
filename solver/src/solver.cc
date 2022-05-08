@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 10:57:47 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/08 20:31:07 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 00:52:49 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int Solver::solve() {
 
 void Solver::tryAdd(const Node *n, enum operation op) {
     Node *temp = new Node(*n, op, heuristic_);
-    if (!visited_.contains(temp)) {
+    if (visited_.find(temp) == visited_.end()) {
         nodes_.push(temp);
         visited_.insert(temp);
     } else {
