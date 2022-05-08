@@ -1,0 +1,11 @@
+# This puzzle is solvable
+3
+3
+5
+1
+7
+2
+6
+4
+8
+0

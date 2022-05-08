@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 23:27:02 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/07 19:26:35 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/07 21:27:44 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 class Puzzle;
 
-typedef int (*heuristicFunction)(Puzzle &);
+typedef int (*heuristicFunction)(const Puzzle &);
 
 bool solvable(const Puzzle &puzzle);
 int manhattan(const Puzzle &puzzle);

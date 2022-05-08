@@ -20,3 +20,8 @@ html, body {
   background-image: url(picture.jpg);
   background-clip: content-box;
 }
+
+.empty-element {
+  background-color: rgb(40, 40, 40);
+  background-blend-mode: multiply;
+}

@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:26:28 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/07 18:50:40 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/07 22:24:44 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@ class Puzzle {
     Puzzle(const Puzzle &puzzle);
     ~Puzzle();
 
-    void print();
+    //Puzzle &operator=(const Puzzle &a);
+
+    void print() const;
 
     uint8_t get(uint8_t id) const { return data_[id]; }
     uint8_t get(uint8_t x, uint8_t y) const { return data_[x + y * sizeX_]; }
