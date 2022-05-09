@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:25:05 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 02:56:09 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 18:16:01 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,51 +14,53 @@
 
 #include <iostream>
 
-Node::Node(const Node &node) : Puzzle(node) {
-    moves_ = node.moves_;
-    emptyField_ = node.emptyField_;
-    transitions_ = node.transitions_;
-    heuristic_ = node.heuristic_;
+#include "heuristics.h"
+
+typedef int (*priorityFunction)(const Node &);
+
+Node::Node(const Node &node)
+    : Puzzle(node),
+      empty_id_(node.empty_id_),
+      move_list_(node.move_list_),
+      transitions_(node.transitions_),
+      heuristic_(node.heuristic_) {}
+
+Node::Node(const Node &node, enum operation op, heuristicFunction h)
+    : Puzzle(node),
+      empty_id_(node.empty_id_),
+      move_list_(node.move_list_),
+      transitions_(node.transitions_ + 1) {
+    applyOperation(op);
+    heuristic_ = h(*this);
+    priority_ = heuristic_ + transitions_;
 }
 
-Node::Node(const Node &node, enum operation op, heuristicFunction f)
-    : Puzzle(node) {
-    moves_ = node.moves_;
-    moves_.push_back(op & 0b10);
-    moves_.push_back(op & 0b01);
-    emptyField_ = applyOperation(op);
-    transitions_ = node.transitions_ + 1;
-    heuristic_ = f(*this);
-}
-
-Node::Node(const Puzzle &puzzle, heuristicFunction f) : Puzzle(puzzle) {
-    transitions_ = 0;
-    heuristic_ = f(puzzle);
-    for (int i = 0; i < puzzle.getSizeFull(); i++) {
-        if (puzzle.data_[i] == 0) emptyField_ = i;
-    }
+Node::Node(const Puzzle &puzzle, uint8_t empty, heuristicFunction h) : Puzzle(puzzle) {
+    empty_id_ = empty;
+    heuristic_ = h(*this);
+    priority_ = heuristic_ + transitions_;
 }
 
 Node::~Node() {}
 
-int Node::applyOperation(enum operation op) {
+void Node::applyOperation(enum operation op) {
     uint8_t swap = 0;
     switch (op) {
         case kup:
-            swap = emptyField_ - getSizeX();
+            swap = empty_id_ - getSizeX();
             break;
         case kdown:
-            swap = emptyField_ + getSizeX();
+            swap = empty_id_ + getSizeX();
             break;
         case kleft:
-            swap = emptyField_ - 1;
+            swap = empty_id_ - 1;
             break;
         case kright:
-            swap = emptyField_ + 1;
+            swap = empty_id_ + 1;
             break;
     }
-    // std::cout << "swapping: " << (int)emptyField_ << " with: " << (int)swap
-    // << "\n";
-    std::swap(data_[emptyField_], data_[swap]);
-    return swap;
+    std::swap(data_[empty_id_], data_[swap]);
+    empty_id_ = swap;
+    move_list_.push_back(op & 0b10);
+    move_list_.push_back(op & 0b01);
 }

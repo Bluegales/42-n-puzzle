@@ -6,15 +6,14 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 22:40:02 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/08 21:28:51 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 18:23:12 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <vector>
 
-#include "puzzle.h"
-#include "solution.h"
+#include "node.h"
 
 /*
 static int distance(uint8_t id, uint8_t value) {
@@ -22,46 +21,43 @@ static int distance(uint8_t id, uint8_t value) {
 }
 */
 
-static int parity(const uint8_t *data, int size) {
+static int parity(const Node &node) {
+    int size = node.getSizeFull();
     int inversions = 0;
     for (int i = 0; i < size; i++) {
         for (int j = i + 1; j < size; j++) {
-            int a = data[i];
-            int b = data[j];
-            if (a && b && a > b) inversions++;
+            int a = node.get(i);
+            int b = node.get(j);
+            if (i != node.getEmptyId() && j != node.getEmptyId() && a > b) inversions++;
         }
     }
+    //std::cout << "empty is: " << node.getEmptyId() << "\n";
     return inversions;
 }
 
-bool solvable(const Puzzle &puzzle) {
-    int par = parity(puzzle.data_, puzzle.getSizeFull());
-    std::cout << "parity is: " << par << "\n";
-    if (puzzle.getSizeFull() % 2 == 0) {
-        int test_empty_x = puzzle.emptyField_ / puzzle.getSizeX();
-        int real_empty_x =
-            solution().data[puzzle.getSizeX()][puzzle.getSizeFull() - 1].x;
-        int offset = abs(test_empty_x - real_empty_x);
+bool solvable(const Node &node) {
+    int par = parity(node);
+    if (node.getSizeX() % 2 == 0) {
+        int empty_x = node.getEmptyId() / node.getSizeX();
+        int offset = abs(node.getSizeX() - empty_x);
         par += offset;
-        std::cout << "offset is" << offset << "\n";
+        //std::cout << "even:" << offset << "\n";
     }
-    if (par % 2 != 0) {
-        std::cout << "is solvable!!\n";
+    //std::cout << "parity:" << par << "\n";
+    if (par % 2 == 0) {
         return true;
     }
     return false;
 }
 
-int manhattan(const Puzzle &puzzle) {
+int manhattan(const Node &node) {
+    int size = node.getSizeX();
     int distance = 0;
-    auto sol = solutions.data[puzzle.getSizeX()];
-    for (int y = 0; y < puzzle.getSizeX(); y++) {
-        for (int x = 0; x < puzzle.getSizeX(); x++) {
-            int id = puzzle.get(x, y);
-            if (id != 0) {
-                auto correct = sol[puzzle.get(x, y)];
-                if (puzzle.get(x, y) != 0)
-                    distance += abs(x - correct.x) + abs(y - correct.y);
+    for (int y = 0; y < node.getSizeX(); y++) {
+        for (int x = 0; x < node.getSizeX(); x++) {
+            int id = node.get(x, y);
+            if (id != node.getEmptyId()) {
+                distance += abs(x - id % size) + abs(y - id / size);
             }
             // std::cout << "distance is: " << abs(x - correct.x) + abs(y -
             //  correct.y)
@@ -69,19 +65,21 @@ int manhattan(const Puzzle &puzzle) {
             //(int)correct.x << "|" << (int)correct.y << ")" << std::endl;
         }
     }
-    // std::cout << "manhatten is: " << distance << std::endl;
+    //std::cout << "manhatten is: " << distance << std::endl;
     return distance;
 }
 
-int misplaced(const Puzzle &puzzle) {
+int misplaced(const Node &puzzle) {
+    int size = puzzle.getSizeX();
     int distance = 0;
-    auto sol = solutions.data[puzzle.getSizeX()];
     for (int y = 0; y < puzzle.getSizeX(); y++) {
         for (int x = 0; x < puzzle.getSizeX(); x++) {
-            auto correct = sol[puzzle.get(x, y)];
-            if (x - correct.x != 0 || y - correct.y != 0) distance++;
+            int id = puzzle.get(x, y);
+            if (id != 0 && x - id % size != 0 && y - id / size) {
+                distance++;
+            }
         }
     }
-    //std::cout << "misplaced is: " << distance << std::endl;
+    std::cout << "misplaced is: " << distance << std::endl;
     return distance;
 }

@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 17:22:47 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 03:42:05 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 17:54:57 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,69 +17,65 @@
 #include "heuristics.h"
 #include "parse.h"
 #include "puzzle.h"
-#include "solver.h"
 #include "solution.h"
+#include "solver.h"
 
-void print(const Puzzle &start, const Solver &solver, int64_t duration) {
+using namespace std::chrono;
+
+void print(const Puzzle &start, uint8_t empty,  const Solver &solver, int64_t duration) {
     std::cout << "Took " << duration << "[µs]"
               << " (" << duration / 1000 << "ms)\n";
     auto solution = solver.getBestNode();
-    if (!solution)
-        return;
-    //solution->print();
+    if (!solution) return;
+    solution->print();
     std::cout << "Moves: " << solution->getTransitions() << "\n";
     std::cout << "Time complexity: " << solver.getTimeComplexity() << "\n";
     std::cout << "Size complexity: " << solver.getSizeComplexity() << "\n";
     std::cout << "https://bluegales.github.io/42-n-puzzle/?nbr=";
-    int size = start.getSizeX();
-    Puzzle puzzle_convert(start);
-    int hole = 0;
-    for (int i = 0; i < size * size; i++) {
-        auto convert = solutions.data[size][i];
-        int convert_id = convert.x + convert.y * size;
-        for (int j = 0; j < size * size; j++)
-        {
-            if (start.data_[j] == i)
-            {
-                if (i == 0)
-                    hole = j;
-                puzzle_convert.data_[j] = convert_id;
-            }
-        }
-    }
-    for (int i = 0; i < size * size; i++){
-        std::cout << (int)puzzle_convert.get(i);
-        if (i != size * size - 1) {
+    for (int i = 0; i < start.getSizeFull(); i++) {
+        std::cout << int{start.get(i)};
+        if (i != start.getSizeFull() - 1) {
             std::cout << ",";
         }
     }
-    std::cout << "&hole=" << hole;
+    std::cout << "&hole=" << int{empty};
     std::cout << "&cmd=";
     auto moves = solution->getMoves();
     for (int i = 0; i < solution->getTransitions(); i++) {
-        int op = (int)moves.at(i*2) * 2 + moves.at(i*2 + 1);
+        int op = int{moves.at(i * 2) * 2} + int{moves.at(i * 2 + 1)};
         std::cout << op;
     }
     std::cout << "\n";
-    //std::cout << "logged moves: " << moves.size() << "\n";
+    // std::cout << "logged moves: " << moves.size() << "\n";
 }
 
 int main(int argc, char **argv) {
     if (argc != 3) return (1);
     std::vector<uint8_t> numbers;
-    if (parse(argv[1], numbers)) return (1);
-    Puzzle puzzle(numbers);
-    puzzle.print();
-    std::chrono::steady_clock::time_point begin =
-        std::chrono::steady_clock::now();
-    Solver solver(puzzle, misplaced);
+    Puzzle order;
+    Puzzle snake;
+    uint8_t snake_empty;
+    try {
+        Parse parse(argv[1]);
+        order = parse.getOrder();
+        snake = parse.getSnake();
+        snake_empty = parse.getSnakeEmpty();
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << '\n';
+        return (1);
+    }
+    order.print();
+    std::cout << "converted to\n";
+    snake.print();
     int type = argv[2][0] - '0';
     if (type < 0 || type > 3) return 1;
-    if (solver.solve((SolveType)type, manhattan)) return 0;
-    std::chrono::steady_clock::time_point end =
-        std::chrono::steady_clock::now();
-    print(puzzle, solver,
-          std::chrono::duration_cast<std::chrono::microseconds>(end - begin)
-              .count());
+
+    (void) snake;
+    (void) order;
+    steady_clock::time_point begin = steady_clock::now();
+    Solver solver(snake, snake_empty, manhattan);
+    solver.solve(SolveType::kperfect);
+    steady_clock::time_point end = steady_clock::now();
+    print(snake, snake_empty, solver, duration_cast<microseconds>(end - begin).count());
     return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:23:38 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/06 20:32:10 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 14:17:38 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,23 @@
 
 #include <vector>
 
-int parse(char *file_name, std::vector<uint8_t> &numbers);
+#include "puzzle.h"
 
-#endif // PARSE
+class Parse {
+   public:
+    Parse(char *file_name);
+    ~Parse();
+    const Puzzle &getOrder() const { return order_; }
+    const Puzzle &getSnake() const { return snake_; }
+    uint8_t getSnakeEmpty() const { return snake_empty_; }
+
+   private:
+    void convertSnake();
+
+    bool isValid_;
+    Puzzle order_;
+    Puzzle snake_;
+    uint8_t snake_empty_;
+};
+
+#endif  // PARSE

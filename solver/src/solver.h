@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 10:59:05 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 04:34:35 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 17:53:04 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,25 +22,14 @@
 #include "heuristics.h"
 #include "node.h"
 
-enum class SolveType {kgreedy = 0, kbalanced = 1, kperfect = 2, kcompare = 3};
-
-class Puzzle;
-
-class Compare {
-   public:
-    bool operator()(Node* a, Node* b) {
-        if (a->getBestPossibleResult() == b->getBestPossibleResult())
-            return (a->getTransitions() < b->getTransitions());
-        return (a->getBestPossibleResult() > b->getBestPossibleResult());
-    }
-};
+enum class SolveType { kgreedy = 0, kbalanced = 1, kperfect = 2, kcompare = 3 };
 
 struct Hash {
-    size_t operator()(const Node* node) const {
+    size_t operator()(const Puzzle* puzzle) const {
         size_t result = 0;
-        const size_t max_size = node->getSizeFull();
+        const size_t max_size = puzzle->getSizeFull();
         for (size_t i = 0; i < max_size; ++i) {
-            result = node->data_[i] + (result * max_size);
+            result = puzzle->get(i) + (result * max_size);
         }
         // std::cout << "made hash:" << result << "\n";
         return (result);
@@ -48,18 +37,31 @@ struct Hash {
 };
 
 struct SetCompare {
-    bool operator()(const Node* lhs, const Node* rhs) const {
-        return 0 == std::memcmp(lhs->data_, rhs->data_, lhs->getSizeFull());
+    bool operator()(const Puzzle* lhs, const Puzzle* rhs) const {
+        if (0 ==
+            std::memcmp(lhs->getData(), rhs->getData(), lhs->getSizeFull()))
+            return true;
+        std::cout << "Hash failed\n";
+        return false;
+    }
+};
+
+class Priority {
+   public:
+    bool operator()(Node* a, Node* b) {
+        if (a->getPriority() == b->getPriority())
+            return (a->getTransitions() <= b->getTransitions());
+        return (a->getPriority() > b->getPriority());
     }
 };
 
 class Solver {
    public:
-    Solver(Puzzle& puzzle, heuristicFunction heuristic_);
+    Solver(const Puzzle& puzzle, uint8_t empty, heuristicFunction heuristic);
     ~Solver();
 
-    heuristicFunction heuristic_;
-    int solve(SolveType type, heuristicFunction f);
+    const heuristicFunction heuristic_;
+    int solve(SolveType type);
 
     Node* getBestNode() const { return best_node_; }
     int getTimeComplexity() const { return time_complexity_; }
@@ -72,10 +74,9 @@ class Solver {
 
     void tryAdd(const Node* n, enum operation op);
     void branch(const Node* n);
-    void print();
-    // std::function<bool(const Puzzle& a, const Puzzle& b)> *cmp;
-    std::priority_queue<Node*, std::vector<Node*>, Compare> nodes_;
-    std::unordered_set<const Node*, Hash, SetCompare> visited_;
+    void print();  // debugging
+    std::priority_queue<Node*, std::vector<Node*>, Priority> nodes_;
+    std::unordered_set<const Puzzle*, Hash, SetCompare> visited_;
     Node* best_node_ = nullptr;
     int time_complexity_ = 0;
     int size_complexity_ = 0;

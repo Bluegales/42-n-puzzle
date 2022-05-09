@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 22:52:59 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/07 05:50:46 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 14:55:06 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,6 @@ struct solution {
     } data[17][16 * 16 + 1];
 };
 
-const solution solutions = solution();
+const solution snake_solutions = solution();
 
 #endif  // SOLUTION
