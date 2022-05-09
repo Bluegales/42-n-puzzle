@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 10:59:05 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/08 17:04:58 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 04:34:35 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,16 @@
 #include "heuristics.h"
 #include "node.h"
 
+enum class SolveType {kgreedy = 0, kbalanced = 1, kperfect = 2, kcompare = 3};
+
 class Puzzle;
 
 class Compare {
    public:
     bool operator()(Node* a, Node* b) {
-        return (a->getMinTransitions() >= b->getMinTransitions());
+        if (a->getBestPossibleResult() == b->getBestPossibleResult())
+            return (a->getTransitions() < b->getTransitions());
+        return (a->getBestPossibleResult() > b->getBestPossibleResult());
     }
 };
 
@@ -45,7 +49,6 @@ struct Hash {
 
 struct SetCompare {
     bool operator()(const Node* lhs, const Node* rhs) const {
-        return true;
         return 0 == std::memcmp(lhs->data_, rhs->data_, lhs->getSizeFull());
     }
 };
@@ -55,13 +58,18 @@ class Solver {
     Solver(Puzzle& puzzle, heuristicFunction heuristic_);
     ~Solver();
 
-    const heuristicFunction heuristic_;
-    int solve();
+    heuristicFunction heuristic_;
+    int solve(SolveType type, heuristicFunction f);
+
     Node* getBestNode() const { return best_node_; }
     int getTimeComplexity() const { return time_complexity_; }
     int getSizeComplexity() const { return size_complexity_; }
 
    private:
+    int solveGreedy();
+    int solveBalanced();
+    int solvePerfect();
+
     void tryAdd(const Node* n, enum operation op);
     void branch(const Node* n);
     void print();
@@ -73,4 +81,4 @@ class Solver {
     int size_complexity_ = 0;
 };
 
-#endif  // SOLVER_H
+#endif // SOLVER_H

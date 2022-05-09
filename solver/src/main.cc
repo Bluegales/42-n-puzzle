@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 17:22:47 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/08 20:39:36 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 03:42:05 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ void print(const Puzzle &start, const Solver &solver, int64_t duration) {
     std::cout << "Took " << duration << "[µs]"
               << " (" << duration / 1000 << "ms)\n";
     auto solution = solver.getBestNode();
+    if (!solution)
+        return;
     //solution->print();
     std::cout << "Moves: " << solution->getTransitions() << "\n";
     std::cout << "Time complexity: " << solver.getTimeComplexity() << "\n";
@@ -63,7 +65,7 @@ void print(const Puzzle &start, const Solver &solver, int64_t duration) {
 }
 
 int main(int argc, char **argv) {
-    if (argc != 2) return (1);
+    if (argc != 3) return (1);
     std::vector<uint8_t> numbers;
     if (parse(argv[1], numbers)) return (1);
     Puzzle puzzle(numbers);
@@ -71,7 +73,9 @@ int main(int argc, char **argv) {
     std::chrono::steady_clock::time_point begin =
         std::chrono::steady_clock::now();
     Solver solver(puzzle, misplaced);
-    if (solver.solve()) return 0;
+    int type = argv[2][0] - '0';
+    if (type < 0 || type > 3) return 1;
+    if (solver.solve((SolveType)type, manhattan)) return 0;
     std::chrono::steady_clock::time_point end =
         std::chrono::steady_clock::now();
     print(puzzle, solver,

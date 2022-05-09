@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:25:44 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/08 16:42:21 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 04:15:14 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,17 @@ class Node : public Puzzle {
 
     int applyOperation(enum operation op);
 
-    uint16_t getWeight() const { return weight_; }
-    void setWeight(uint16_t weight) { weight_ = weight; }
+    uint16_t getHeuristic() const { return heuristic_; }
+    //void setWeight(uint16_t weight) { weight_ = weight; }
     uint16_t getTransitions() const { return transitions_; }
-    uint16_t getMinTransitions() const { return weight_ + transitions_; }
+    uint16_t getWeight() const { return weight_; }
+    uint16_t getBestPossibleResult() const { return heuristic_ + transitions_; }
     std::vector<bool> getMoves() const { return moves_; }
 
    private:
     std::vector<bool> moves_;
     uint16_t transitions_ = 0;
+    uint16_t heuristic_ = 0;
     uint16_t weight_ = 0;
 };
 

@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:25:05 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/08 16:46:57 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 02:56:09 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Node::Node(const Node &node) : Puzzle(node) {
     moves_ = node.moves_;
     emptyField_ = node.emptyField_;
     transitions_ = node.transitions_;
-    weight_ = node.weight_;
+    heuristic_ = node.heuristic_;
 }
 
 Node::Node(const Node &node, enum operation op, heuristicFunction f)
@@ -28,12 +28,12 @@ Node::Node(const Node &node, enum operation op, heuristicFunction f)
     moves_.push_back(op & 0b01);
     emptyField_ = applyOperation(op);
     transitions_ = node.transitions_ + 1;
-    weight_ = f(*this);
+    heuristic_ = f(*this);
 }
 
 Node::Node(const Puzzle &puzzle, heuristicFunction f) : Puzzle(puzzle) {
     transitions_ = 0;
-    weight_ = f(puzzle);
+    heuristic_ = f(puzzle);
     for (int i = 0; i < puzzle.getSizeFull(); i++) {
         if (puzzle.data_[i] == 0) emptyField_ = i;
     }
