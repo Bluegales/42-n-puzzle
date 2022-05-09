@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 10:59:05 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 17:53:04 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 21:26:20 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ struct SetCompare {
         if (0 ==
             std::memcmp(lhs->getData(), rhs->getData(), lhs->getSizeFull()))
             return true;
-        std::cout << "Hash failed\n";
+        //std::cout << "Hash failed\n";
         return false;
     }
 };

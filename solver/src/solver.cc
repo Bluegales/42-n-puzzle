@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 10:57:47 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 18:23:56 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 23:05:12 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,13 +93,16 @@ int Solver::solveGreedy() {
 int Solver::solveBalanced() { return solvePerfect(); }
 
 int Solver::solvePerfect() {
+    std::cout << "heu top " << nodes_.top()->getHeuristic() << "\n";
     while (!nodes_.empty()) {
         if (size_complexity_ < (int)nodes_.size())
             size_complexity_ = (int)nodes_.size();
         //std::cout << visited_.size() << "\n";
         const Node *top = nodes_.top();
         nodes_.pop();
-        if (top->getHeuristic() == 0) {
+        if (top->getHeuristic() == 0 || nodes_.size() > 10000000) {
+            std::cout << "heu top " << nodes_.top()->getHeuristic() << "\n";
+            nodes_.top()->print();
             time_complexity_ = visited_.size();
             delete best_node_;
             best_node_ = new Node(*top);

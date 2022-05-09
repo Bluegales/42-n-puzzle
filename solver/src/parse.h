@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:23:38 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 14:17:38 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 21:23:48 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Parse {
    private:
     void convertSnake();
 
-    bool isValid_;
+    //bool isValid_;
     Puzzle order_;
     Puzzle snake_;
     uint8_t snake_empty_;

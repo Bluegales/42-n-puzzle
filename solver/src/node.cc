@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:25:05 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 18:16:01 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 22:51:54 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,17 @@
 
 typedef int (*priorityFunction)(const Node &);
 
+static uint16_t caclPriority(int heuristic, int transitions) {
+    return heuristic * 2 + transitions;
+}
+
 Node::Node(const Node &node)
     : Puzzle(node),
       empty_id_(node.empty_id_),
       move_list_(node.move_list_),
       transitions_(node.transitions_),
-      heuristic_(node.heuristic_) {}
+      heuristic_(node.heuristic_),
+      priority_(node.priority_) {}
 
 Node::Node(const Node &node, enum operation op, heuristicFunction h)
     : Puzzle(node),
@@ -32,13 +37,13 @@ Node::Node(const Node &node, enum operation op, heuristicFunction h)
       transitions_(node.transitions_ + 1) {
     applyOperation(op);
     heuristic_ = h(*this);
-    priority_ = heuristic_ + transitions_;
+    priority_ = caclPriority(heuristic_, transitions_);
 }
 
 Node::Node(const Puzzle &puzzle, uint8_t empty, heuristicFunction h) : Puzzle(puzzle) {
     empty_id_ = empty;
     heuristic_ = h(*this);
-    priority_ = heuristic_ + transitions_;
+    priority_ = caclPriority(heuristic_, transitions_);
 }
 
 Node::~Node() {}

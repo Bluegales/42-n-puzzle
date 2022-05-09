@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 22:40:02 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 18:23:12 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/09 23:32:23 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,17 @@ static int parity(const Node &node) {
 bool solvable(const Node &node) {
     int par = parity(node);
     if (node.getSizeX() % 2 == 0) {
-        int empty_x = node.getEmptyId() / node.getSizeX();
-        int offset = abs(node.getSizeX() - empty_x);
-        par += offset;
-        //std::cout << "even:" << offset << "\n";
+        int empty_x = node.getSizeX() - node.getEmptyId() / node.getSizeX();
+        //std::cout << "empty is :" << empty_x << "\n";
+        par += empty_x + node.getSizeX() / 2;
+        //std::cout << "even:" << offset + 1 << "\n";
     }
     //std::cout << "parity:" << par << "\n";
     if (par % 2 == 0) {
+        //std::cout << "# This puzzle is solvable\n";
         return true;
     }
+    //std::cout << "# This puzzle is unsolvable\n";
     return false;
 }
 
