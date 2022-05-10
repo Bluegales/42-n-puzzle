@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 10:59:05 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 21:26:20 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/10 04:11:48 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #define SOLVER_H
 
 #include <cstring>
-#include <functional>
 #include <iostream>
 #include <queue>
 #include <unordered_set>
@@ -22,7 +21,7 @@
 #include "heuristics.h"
 #include "node.h"
 
-enum class SolveType { kgreedy = 0, kbalanced = 1, kperfect = 2, kcompare = 3 };
+enum class SolveType { kbalanced = 0, kgreedy = 1 };
 
 struct Hash {
     size_t operator()(const Puzzle* puzzle) const {
@@ -60,23 +59,29 @@ class Solver {
     Solver(const Puzzle& puzzle, uint8_t empty, heuristicFunction heuristic);
     ~Solver();
 
-    const heuristicFunction heuristic_;
     int solve(SolveType type);
 
-    Node* getBestNode() const { return best_node_; }
+    const heuristicFunction heuristic_;
+    const Puzzle &start_;
+    const int start_empty_;
+
+    int Solver::solve(SolveType type);
+
+    void print(int64_t duration);
+    const Node* getBestNode() const { return best_node_; }
     int getTimeComplexity() const { return time_complexity_; }
     int getSizeComplexity() const { return size_complexity_; }
 
    private:
     int solveGreedy();
     int solveBalanced();
-    int solvePerfect();
-
     void tryAdd(const Node* n, enum operation op);
     void branch(const Node* n);
-    void print();  // debugging
+
     std::priority_queue<Node*, std::vector<Node*>, Priority> nodes_;
     std::unordered_set<const Puzzle*, Hash, SetCompare> visited_;
+
+    // Solutions
     Node* best_node_ = nullptr;
     int time_complexity_ = 0;
     int size_complexity_ = 0;

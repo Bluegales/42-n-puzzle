@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 10:57:47 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 23:05:12 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/10 04:11:57 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "puzzle.h"
 
 Solver::Solver(const Puzzle &puzzle, uint8_t empty, heuristicFunction f)
-    : heuristic_(f) {
+    : heuristic_(f), start_(puzzle), start_empty_(empty) {
     Node *temp = new Node(puzzle, empty, heuristic_);
     nodes_.push(temp);
     visited_.insert(new Puzzle(puzzle));
@@ -43,40 +43,30 @@ int Solver::solve(SolveType type) {
         return 1;
     }
     switch (type) {
-        case SolveType::kgreedy:
-            return (solveGreedy());
-            break;
         case SolveType::kbalanced:
             return (solveBalanced());
             break;
-        case SolveType::kperfect:
-            return (solvePerfect());
-        case SolveType::kcompare:
-            solveGreedy();
-            solveBalanced();
+        case SolveType::kgreedy:
+            return (solveGreedy());
             break;
     }
-    return 0;
 }
 
 int Solver::solveGreedy() {
-    std::cout << "Greedy!\n";
     while (!nodes_.empty()) {
+        if (size_complexity_ < (int)nodes_.size());
+            size_complexity_ = (int)nodes_.size();
         const Node *top = nodes_.top();
         nodes_.pop();
-        if (size_complexity_ < (int)nodes_.size())
-            size_complexity_ = (int)nodes_.size();
         while (!nodes_.empty()) {
-            auto temp = nodes_.top();
+            delete nodes_.top();
             nodes_.pop();
-            visited_.insert(temp);
         }
         if (top->getHeuristic() == 0) {
-            time_complexity_ = visited_.size() + nodes_.size();
-            delete best_node_;
+            time_complexity_ = visited_.size();
             best_node_ = new Node(*top);
+            return 0;
         } else {
-            // top->print();
             branch(top);
             if (nodes_.empty()) {
                 std::cout << "Couldnt find an optimal solution...\n";
@@ -86,23 +76,16 @@ int Solver::solveGreedy() {
         }
         delete top;
     }
-
-    return (0);
+    return 0;
 }
 
-int Solver::solveBalanced() { return solvePerfect(); }
-
-int Solver::solvePerfect() {
-    std::cout << "heu top " << nodes_.top()->getHeuristic() << "\n";
+int Solver::solveBalanced() {
     while (!nodes_.empty()) {
         if (size_complexity_ < (int)nodes_.size())
             size_complexity_ = (int)nodes_.size();
-        //std::cout << visited_.size() << "\n";
         const Node *top = nodes_.top();
         nodes_.pop();
-        if (top->getHeuristic() == 0 || nodes_.size() > 10000000) {
-            std::cout << "heu top " << nodes_.top()->getHeuristic() << "\n";
-            nodes_.top()->print();
+        if (top->getHeuristic() == 0) {
             time_complexity_ = visited_.size();
             delete best_node_;
             best_node_ = new Node(*top);
@@ -128,23 +111,45 @@ void Solver::tryAdd(const Node *n, enum operation op) {
 void Solver::branch(const Node *n) {
     int size = n->getSizeX();
     int empty = n->getEmptyId();
-    // std::cout << size << empty << "\n";
     if (empty / size != 0) tryAdd(n, kup);
     if (empty / size != size - 1) tryAdd(n, kdown);
     if (empty % size != 0) tryAdd(n, kleft);
     if (empty % size != size - 1) tryAdd(n, kright);
 }
 
-void Solver::print() {
-    for (int i = 0; i < (int)nodes_.size(); i++)
-        while (!nodes_.empty()) {
-            auto temp = nodes_.top();
-            std::cout << "NODE:\n"
-                      << "best: " << temp->getBestPossibleResult() << "\n";
-            std::cout << "trans: " << temp->getTransitions() << "\n";
-            std::cout << "heu: " << temp->getHeuristic() << "\n";
-            std::cout << "prio " << temp->getPriority() << "\n";
-            nodes_.pop();
-            delete temp;
+void Solver::print(int64_t duration) {
+    std::cout << "Took " << duration << "[µs]"
+              << " (" << duration / 1000 << "ms)\n";
+    std::cout << "Moves: " << best_node_->getTransitions() << "\n";
+    std::cout << "Time complexity: " << getTimeComplexity() << "\n";
+    std::cout << "Size complexity: " << getSizeComplexity() << "\n";
+    std::cout << "https://bluegales.github.io/42-n-puzzle/?nbr=";
+    for (int i = 0; i < start_.getSizeFull(); i++) {
+        std::cout << int{start_.get(i)};
+        if (i != start_.getSizeFull() - 1) {
+            std::cout << ",";
         }
+    }
+    std::cout << "&hole=" << start_empty_;
+    std::cout << "&cmd=";
+    auto moves = best_node_->getMoves();
+    for (int i = 0; i < best_node_->getTransitions(); i++) {
+        int op = int{moves.at(i * 2) * 2} + int{moves.at(i * 2 + 1)};
+        std::cout << op;
+    }
+    std::cout << "\n";
 }
+
+// void Solver::print() {
+//     for (int i = 0; i < (int)nodes_.size(); i++)
+//         while (!nodes_.empty()) {
+//             auto temp = nodes_.top();
+//             std::cout << "NODE:\n"
+//                       << "best: " << temp->getBestPossibleResult() << "\n";
+//             std::cout << "trans: " << temp->getTransitions() << "\n";
+//             std::cout << "heu: " << temp->getHeuristic() << "\n";
+//             std::cout << "prio " << temp->getPriority() << "\n";
+//             nodes_.pop();
+//             delete temp;
+//         }
+// }

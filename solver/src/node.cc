@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:25:05 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 22:51:54 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/10 03:41:31 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@
 
 typedef int (*priorityFunction)(const Node &);
 
-static uint16_t caclPriority(int heuristic, int transitions) {
-    return heuristic * 2 + transitions;
+int Node::heuristic_weight_ = 1;
+
+static uint16_t calcPriority(int heuristic, int transitions) {
+    return heuristic * Node::heuristic_weight_ + transitions;
 }
 
 Node::Node(const Node &node)
@@ -37,13 +39,13 @@ Node::Node(const Node &node, enum operation op, heuristicFunction h)
       transitions_(node.transitions_ + 1) {
     applyOperation(op);
     heuristic_ = h(*this);
-    priority_ = caclPriority(heuristic_, transitions_);
+    priority_ = calcPriority(heuristic_, transitions_);
 }
 
 Node::Node(const Puzzle &puzzle, uint8_t empty, heuristicFunction h) : Puzzle(puzzle) {
     empty_id_ = empty;
     heuristic_ = h(*this);
-    priority_ = caclPriority(heuristic_, transitions_);
+    priority_ = calcPriority(heuristic_, transitions_);
 }
 
 Node::~Node() {}

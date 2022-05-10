@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:25:44 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 18:16:02 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/10 01:23:39 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Node : public Puzzle {
     uint16_t getBestPossibleResult() const { return heuristic_ + transitions_; }
     const std::vector<bool> getMoves() const { return move_list_; }
 
+    static int heuristic_weight_;
    private:
     uint8_t empty_id_;
     std::vector<bool> move_list_;

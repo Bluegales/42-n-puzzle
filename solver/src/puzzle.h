@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:26:28 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 14:09:46 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/11 04:12:52 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <vector>
 
+// Represents the state
 class Puzzle {
    public:
     Puzzle();

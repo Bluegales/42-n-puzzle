@@ -6,7 +6,7 @@
 #    By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/10 12:13:51 by pfuchs            #+#    #+#              #
-#    Updated: 2022/05/09 18:21:33 by pfuchs           ###   ########.fr        #
+#    Updated: 2022/05/10 02:22:16 by pfuchs           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ CC		= g++
 CFLAGSS	= -Wall -Wextra -Werror -Wno-shadow -O3 -std=c++17
 INCFLAG	= -I src
 # File Variables
-NAME	= test
+NAME	= n-puzzle
 FILES	= main
 CLASSES	= parse puzzle heuristics node solver
 SRC		= $(addsuffix .cc,$(CLASSES) $(FILES))

@@ -2008,7 +2008,7 @@ return!1},
 hf(){var t=u.z.a(document.querySelector("#puzzle")),s=new A.c3(t,A.j([],u.B),A.j([],u.I))
 s.au(t)
 s.aG()
-s.aV(0,new A.b6(1e6))
+s.aV(0,new A.b6(1e5))
 return 0},
 U:function U(a){this.b=a},
 c3:function c3(a,b,c){var _=this

@@ -127,6 +127,6 @@ int main() {
   var dom = querySelector("#puzzle") as HtmlElement;
   Puzzle puzzle = Puzzle(dom);
   puzzle.addCommands();
-  puzzle.play(Duration(milliseconds: 1000));
+  puzzle.play(Duration(milliseconds: 100));
   return (0);
 }

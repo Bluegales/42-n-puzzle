@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:23:29 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 18:14:45 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/10 01:52:45 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ void Parse::convertSnake() {
         for (int j = 0; j < order_.getSizeFull(); j++) {
             if (order_.get(j) == i) {
                 if (i == 0) {
-                    std::cout << "empty: " << (int)j << "\n";
                     snake_empty_ = j;
                 }
                 snake_.set(j, convert_id);
@@ -72,9 +71,13 @@ Parse::Parse(char *file_name) : order_(), snake_() {
     if (!file.is_open()) throw "Can't open file";
     std::string line;
     std::vector<uint8_t> numbers;
-    while (std::getline(file, line)) extractIntegers(line, numbers);
+    while (std::getline(file, line))
+        if (extractIntegers(line, numbers))
+            throw "";
     if (std::size_t { 1u + numbers[0] * numbers[0] } != numbers.size())
-        throw "Size mismatch\n";
+        throw "Size mismatch";
+    if (numbers.size() <= 5)
+        throw "Too small";
     numbers.erase(numbers.begin());
     if (!areConsecutive(numbers)) throw "Non consecutive numbers";
     order_ = Puzzle(numbers);
