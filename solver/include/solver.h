@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 10:59:05 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/10 04:11:48 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/10 22:07:17 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@
 
 #include "heuristics.h"
 #include "node.h"
-
-enum class SolveType { kbalanced = 0, kgreedy = 1 };
 
 struct Hash {
     size_t operator()(const Puzzle* puzzle) const {
@@ -56,30 +54,30 @@ class Priority {
 
 class Solver {
    public:
-    Solver(const Puzzle& puzzle, uint8_t empty, heuristicFunction heuristic);
+    Solver(const Puzzle& puzzle, uint8_t empty, heuristicFunction heuristic, int weight);
     ~Solver();
 
-    int solve(SolveType type);
+    int solve();
 
     const heuristicFunction heuristic_;
     const Puzzle &start_;
     const int start_empty_;
 
-    int Solver::solve(SolveType type);
-
     void print(int64_t duration);
     const Node* getBestNode() const { return best_node_; }
     int getTimeComplexity() const { return time_complexity_; }
     int getSizeComplexity() const { return size_complexity_; }
+    void reset();
 
    private:
-    int solveGreedy();
     int solveBalanced();
-    void tryAdd(const Node* n, enum operation op);
+    int solveGreedy();
+    void tryAdd(const Node* n, Operation op);
     void branch(const Node* n);
 
     std::priority_queue<Node*, std::vector<Node*>, Priority> nodes_;
     std::unordered_set<const Puzzle*, Hash, SetCompare> visited_;
+    int heuristic_weight_ = 1;
 
     // Solutions
     Node* best_node_ = nullptr;

@@ -6,19 +6,21 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 23:27:02 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/09 17:54:19 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/10 23:12:25 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HEURISTICS
-#define HEURISTICS
+#ifndef HEURISTICS_H
+#define HEURISTICS_H
 
-class Node;
+#include "puzzle.h"
 
-typedef int (*heuristicFunction)(const Node &);
+typedef int (*heuristicFunction)(const Puzzle &puzzle, uint8_t empty_id);
 
-bool solvable(const Node &puzzle);
-int manhattan(const Node &puzzle);
-int misplaced(const Node &puzzle);
+bool solvable(const Puzzle &puzzle, uint8_t empty_id);
+int manhattan(const Puzzle &puzzle, uint8_t empty_id);
+int manhattan_weighted(const Puzzle &puzzle, uint8_t empty_id);
+int parity(const Puzzle &puzzle, uint8_t empty_id);
+int misplaced(const Puzzle &puzzle, uint8_t empty_id);
 
-#endif // HEURISTICS
+#endif // HEURISTICS_H

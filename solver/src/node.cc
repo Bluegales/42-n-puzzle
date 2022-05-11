@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:25:05 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/10 03:41:31 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/11 02:06:59 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,56 +18,59 @@
 
 typedef int (*priorityFunction)(const Node &);
 
-int Node::heuristic_weight_ = 1;
-
-static uint16_t calcPriority(int heuristic, int transitions) {
-    return heuristic * Node::heuristic_weight_ + transitions;
+static int calcPriority(uint16_t heuristic, uint16_t transitions, int weight) {
+    if (weight == 0)
+        return heuristic;
+    if (weight >= 1000)
+        return heuristic;
+    return heuristic * (10 + weight) + transitions * 10;
 }
 
 Node::Node(const Node &node)
-    : Puzzle(node),
+    : puzzle_(node.puzzle_),
       empty_id_(node.empty_id_),
       move_list_(node.move_list_),
       transitions_(node.transitions_),
       heuristic_(node.heuristic_),
       priority_(node.priority_) {}
 
-Node::Node(const Node &node, enum operation op, heuristicFunction h)
-    : Puzzle(node),
+Node::Node(const Node &node, Operation op, heuristicFunction h, int weight)
+    : puzzle_(node.puzzle_),
       empty_id_(node.empty_id_),
       move_list_(node.move_list_),
-      transitions_(node.transitions_ + 1) {
+      transitions_(node.transitions_ + 1),
+      priority_(node.priority_) {
     applyOperation(op);
-    heuristic_ = h(*this);
-    priority_ = calcPriority(heuristic_, transitions_);
+    heuristic_ = h(puzzle_, empty_id_);
+    priority_ = calcPriority(heuristic_, transitions_, weight);
 }
 
-Node::Node(const Puzzle &puzzle, uint8_t empty, heuristicFunction h) : Puzzle(puzzle) {
+Node::Node(const Puzzle &puzzle, uint8_t empty, heuristicFunction h, int weight) : puzzle_(puzzle) {
     empty_id_ = empty;
-    heuristic_ = h(*this);
-    priority_ = calcPriority(heuristic_, transitions_);
+    heuristic_ = h(puzzle_, empty_id_);
+    priority_ = calcPriority(heuristic_, transitions_, weight);
 }
 
 Node::~Node() {}
 
-void Node::applyOperation(enum operation op) {
+void Node::applyOperation(Operation op) {
     uint8_t swap = 0;
     switch (op) {
-        case kup:
-            swap = empty_id_ - getSizeX();
+        case Operation::kup:
+            swap = empty_id_ - puzzle_.getSizeX();
             break;
-        case kdown:
-            swap = empty_id_ + getSizeX();
+        case Operation::kdown:
+            swap = empty_id_ + puzzle_.getSizeX();
             break;
-        case kleft:
+        case Operation::kleft:
             swap = empty_id_ - 1;
             break;
-        case kright:
+        case Operation::kright:
             swap = empty_id_ + 1;
             break;
     }
-    std::swap(data_[empty_id_], data_[swap]);
+    puzzle_.swap_values(empty_id_, swap);
     empty_id_ = swap;
-    move_list_.push_back(op & 0b10);
-    move_list_.push_back(op & 0b01);
+    move_list_.push_back((int)op & 0b10);
+    move_list_.push_back((int)op & 0b01);
 }

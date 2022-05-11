@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 17:22:47 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/10 03:54:37 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/11 01:24:34 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 using namespace std::chrono;
 
-void print(const Puzzle &start, uint8_t empty,  const Solver &solver, int64_t duration) {
+void printResult(const Solver &solver, int64_t duration) {
     std::cout << "Took " << duration << "[µs]"
               << " (" << duration / 1000 << "ms)\n";
     auto solution = solver.getBestNode();
@@ -31,13 +31,13 @@ void print(const Puzzle &start, uint8_t empty,  const Solver &solver, int64_t du
     std::cout << "Time complexity: " << solver.getTimeComplexity() << "\n";
     std::cout << "Size complexity: " << solver.getSizeComplexity() << "\n";
     std::cout << "https://bluegales.github.io/42-n-puzzle/?nbr=";
-    for (int i = 0; i < start.getSizeFull(); i++) {
-        std::cout << int{start.get(i)};
-        if (i != start.getSizeFull() - 1) {
+    for (int i = 0; i < solver.start_.getSizeFull(); i++) {
+        std::cout << int{solver.start_.get(i)};
+        if (i != solver.start_.getSizeFull() - 1) {
             std::cout << ",";
         }
     }
-    std::cout << "&hole=" << int{empty};
+    std::cout << "&hole=" << int{solver.start_empty_};
     std::cout << "&cmd=";
     auto moves = solution->getMoves();
     for (int i = 0; i < solution->getTransitions(); i++) {
@@ -47,97 +47,43 @@ void print(const Puzzle &start, uint8_t empty,  const Solver &solver, int64_t du
     std::cout << "\n";
 }
 
-void setWeight(int argc, char **argv) {
-    Node::heuristic_weight_ = 1;
-    if (argc < 4)
-        return;
-    int n;
-    try {
-        n = std::stoi(argv[3]);
-    } catch (const std::exception &e) {
-        n = 1;
-    }
-    std::cout << "weight is: " << n << "\n";
-    Node::heuristic_weight_ = n;
-}
-
-int getType(int argc, char **argv) {
-    if (argc < 3)
-        return 0;
-    int n;
-    try {
-        n = std::stoi(argv[2]);
-    } catch (const std::exception &e) {
-        n = 0;
-    }
-    if (n < 0 || n > 3)
-        n = 0;
-    return n;
-}
-
 void printUsage() {
     std::cout << "Usage:\n";
-    std::cout << "n-puzzle file type weight\n";
-    std::cout << "  type: 0 - default\n";
-    std::cout << "  type: 1 - greedy\n";
-    std::cout << "  type: 2 - compare\n";
-    std::cout << "  type: 3 - default with different weights\n";
+    std::cout << "n-puzzle file heuristic weight option\n";
+    std::cout << "  heuristic:\n";
+    std::cout << "    0 - manhattan (default)\n";
+    std::cout << "    1 - misplaced\n";
+    std::cout << "    2 - parity\n";
+    std::cout << "  weight: (default 1)\n";
+    std::cout << "    0  = greedy\n";
+    std::cout << "    1-2000 how more important are the steps to goal than the steps already traveled:\n";
+    std::cout << "    1  = find optimal solution (dont try on size bigger 4)\n";
+    std::cout << "    2000 = find solution very fast\n";
+    std::cout << "  option:\n";
+    std::cout << "    0 - none (default)\n";
+    std::cout << "    1 - compare multiple weights (ignores weight)\n";
 }
 
-int solve() {
-    int Solver::solve(SolveType type) {
-    if (nodes_.empty()) return -1;
-    if (!solvable(*nodes_.top())) {
-        std::cout << "not solvable\n";
-        return 1;
-    }
-    switch (type) {
-        case SolveType::kbalanced:
-            return (solveBalanced());
-            break;
-        case SolveType::kgreedy:
-            return (solveGreedy());
-            break;
-        case SolveType::kcompare:
-            solveGreedy();
-            solveBalanced();
-            break;
-        case SolveType::kweights:
-            solveGreedy();
-            solveBalanced();
-            break;
-    }
-    return 0;
-}
+void printInput(Parse &parse) {
+    std::cout << "input puzzle:\n";
+    parse.getOrder().print();
+    std::cout << "heuristic:" << parse.getHeuristicString() << "\n";
+    std::cout << "weight:" << parse.getWeight() << "\n";
+    std::cout << "option:" << parse.getOptionString() << "\n";
+    std::cout << "starting....\n";
 }
 
 int main(int argc, char **argv) {
-    if (argc < 3 || argc > 4) {
+    Parse parse(argc, argv);
+    if (!parse.isValid()) {
         printUsage();
         return 1;
     }
-    std::vector<uint8_t> numbers;
-    Puzzle order;
-    Puzzle snake;
-    uint8_t snake_empty;
-    try {
-        Parse parse(argv[1]);
-        order = parse.getOrder();
-        snake = parse.getSnake();
-        snake_empty = parse.getSnakeEmpty();
-    } catch (const char *e) {
-        std::cerr << e << '\n';
-        return (1);
-    }
-    std::cout << "input:\n";
-    order.print();
-    setWeight(argc, argv);
-    int type = getType(argc, argv);
-    std::cerr << type << '\n';
+    printInput(parse);
     steady_clock::time_point begin = steady_clock::now();
-    Solver solver(snake, snake_empty, manhattan);
-    solver.solve((SolveType)type);
+    Solver solver(parse.getSnake(), parse.getSnakeEmpty(), parse.getHeuristicFunction(), parse.getWeight());
+    solver.solve();
     steady_clock::time_point end = steady_clock::now();
-    print(snake, snake_empty, solver, duration_cast<microseconds>(end - begin).count());
+    printResult(solver, duration_cast<microseconds>(end - begin).count());
     return 0;
 }

@@ -6,7 +6,7 @@
 #    By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/10 12:13:51 by pfuchs            #+#    #+#              #
-#    Updated: 2022/05/10 02:22:16 by pfuchs           ###   ########.fr        #
+#    Updated: 2022/05/10 17:42:21 by pfuchs           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ VPATH = src
 # Compiler Variables
 CC		= g++
 CFLAGSS	= -Wall -Wextra -Werror -Wno-shadow -O3 -std=c++17
-INCFLAG	= -I src
+INCFLAG	= -I include
 # File Variables
 NAME	= n-puzzle
 FILES	= main

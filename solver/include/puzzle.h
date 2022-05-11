@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 11:26:28 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/11 04:12:52 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/10 20:45:56 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,9 @@
 #include <cstdint>
 #include <vector>
 
-// Represents the state
+// Only stores the data intself no information about connected states or
+// the empty square
+
 class Puzzle {
    public:
     Puzzle();
@@ -34,6 +36,7 @@ class Puzzle {
     const uint8_t *getData() const { return data_; }
     uint8_t getSizeX() const { return sizeX_; }
     uint8_t getSizeFull() const { return sizeFull_; }
+    void swap_values(uint8_t id1, uint8_t id2) { std::swap(data_[id1], data_[id2]); }
 
     friend void swap(Puzzle &first, Puzzle &second) {
         std::swap(first.data_, second.data_);
