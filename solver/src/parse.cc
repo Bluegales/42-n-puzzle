@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 13:23:29 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/11 01:24:28 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/12 20:22:26 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@
 #include <vector>
 
 #include "solution.h"
-
-
 
 Parse::Parse(int argc, char **argv) : order_(), snake_() {
     if (argc < 2 || argc > 5) return;

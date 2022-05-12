@@ -6,7 +6,7 @@
 /*   By: pfuchs <pfuchs@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/07 10:57:47 by pfuchs            #+#    #+#             */
-/*   Updated: 2022/05/10 22:08:10 by pfuchs           ###   ########.fr       */
+/*   Updated: 2022/05/13 00:08:31 by pfuchs           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void Solver::reset() {
     for (auto i : visited_) {
         delete i;
     }
+    visited_.clear();
     while (!nodes_.empty()) {
         delete nodes_.top();
         nodes_.pop();
@@ -65,10 +66,18 @@ int Solver::solveBalanced() {
         nodes_.pop();
         if (top->getHeuristic() == 0) {
             time_complexity_ = visited_.size();
-            best_node_ = new Node(*top);
-            return 0;
+            if (best_node_ == nullptr || top->getTransitions() < best_node_->getTransitions()) {
+                std::cout << "found new best node\n";
+                delete best_node_;
+                best_node_ = new Node(*top);
+            }
         } else {
-            branch(top);
+            if (best_node_) {
+                if (best_node_->getTransitions() > top->getPriority())
+                    branch(top);
+            } else {
+                branch(top);
+            }
         }
         delete top;
     }
@@ -143,17 +152,3 @@ void Solver::print(int64_t duration) {
     }
     std::cout << "\n";
 }
-
-// void Solver::print() {
-//     for (int i = 0; i < (int)nodes_.size(); i++)
-//         while (!nodes_.empty()) {
-//             auto temp = nodes_.top();
-//             std::cout << "NODE:\n"
-//                       << "best: " << temp->getBestPossibleResult() << "\n";
-//             std::cout << "trans: " << temp->getTransitions() << "\n";
-//             std::cout << "heu: " << temp->getHeuristic() << "\n";
-//             std::cout << "prio " << temp->getPriority() << "\n";
-//             nodes_.pop();
-//             delete temp;
-//         }
-// }
